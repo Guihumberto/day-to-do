@@ -46,7 +46,12 @@
             clickable
           >
             <q-item-section side top>
-              <q-checkbox v-model="item.pay" />
+              <q-checkbox
+                v-model="item.pay"
+                @click.stop="
+                  (item.pay = !item.pay), expanseStore.fbUpdateExpanse(item)
+                "
+              />
             </q-item-section>
             <q-item-section>
               <q-item-label> {{ item.name }} </q-item-label>
@@ -80,7 +85,12 @@
             @click="expanseStore.fbUpdateExpanse(item)"
           >
             <q-item-section side top>
-              <q-checkbox v-model="item.pay" />
+              <q-checkbox
+                v-model="item.pay"
+                @click.stop="
+                  (item.pay = !item.pay), expanseStore.fbUpdateExpanse(item)
+                "
+              />
             </q-item-section>
             <q-item-section>
               <q-item-label class="text-strike"> {{ item.name }} </q-item-label>
