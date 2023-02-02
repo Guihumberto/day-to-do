@@ -196,6 +196,8 @@ export default {
       return listStore.readListPay;
     },
     total() {
+      let soma = this.listPay.reduce((sum, record) => sum + record.mount, 0);
+      console.log(soma);
       return {
         pago: 10,
         devendo: 30,
