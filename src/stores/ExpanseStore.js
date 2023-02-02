@@ -91,12 +91,13 @@ export const useExpanseStore = defineStore("expanse", {
       this.listExpanse.splice(index, 1);
     },
     fbUpdateExpanse(item) {
+      item.pay = !item.pay;
       let userUid = auth.currentUser.uid;
       let linkUser = firebaseDb.ref(
         `/todo/${userUid}/list/${item.idList}/tasks/${item.dateCreate}`
       );
       linkUser.update(item);
-      Notify.create("Entrada Atualizada!");
+      Notify.create("Lançamento Atualizado!");
     },
     fbDeleteExpanse(item) {
       let userUid = auth.currentUser.uid;
@@ -123,7 +124,6 @@ export const useExpanseStore = defineStore("expanse", {
       return !!find;
     },
     addGroup(item) {
-      console.log(this.findGroupCreate(item));
       if (this.findGroupCreate(item)) {
         Notify.create("Já existe um Grupo Cadastradom com esse nome!");
       } else {
@@ -135,7 +135,6 @@ export const useExpanseStore = defineStore("expanse", {
             `/todo/${userUid}/group/credit/${expanseGroup}`
           );
           linkUser.set(expanseGroup);
-          this.listCreditGroup.push(expanseGroup);
           Notify.create("Novo Grupo Cadastrado!");
         } else {
           let userUid = auth.currentUser.uid;
@@ -143,7 +142,6 @@ export const useExpanseStore = defineStore("expanse", {
             `/todo/${userUid}/group/expanse/${expanseGroup}`
           );
           linkUser.set(expanseGroup);
-          this.listExpanseGroup.push(expanseGroup);
           Notify.create("Novo Grupo Cadastrado!");
         }
       }
@@ -156,7 +154,6 @@ export const useExpanseStore = defineStore("expanse", {
       //child added
       Credit.on("child_added", (snapshot) => {
         let plan = snapshot.val();
-
         this.listCreditGroup.push(plan);
       });
 

@@ -2,7 +2,7 @@
   <q-page>
     <div
       class="absolute full-width full-height column"
-      v-if="listExpanse.length"
+      v-if="listExpanse.length || listPay.length"
     >
       <div>
         <q-btn
@@ -38,11 +38,12 @@
         <q-separator class="separator" />
         <q-list separator>
           <q-item
-            tag="label"
             v-ripple
-            v-for="(item, i) in listExpanse.filter((x) => !x.pay)"
+            v-for="(item, i) in listExpanse"
             :key="i"
             :class="item.operator == 'credit' ? 'bg-green-1' : 'bg-red-1'"
+            @click="expanseStore.fbUpdateExpanse(item)"
+            clickable
           >
             <q-item-section side top>
               <q-checkbox v-model="item.pay" />
@@ -58,15 +59,25 @@
               </div>
             </q-item-section>
           </q-item>
-          <q-item-label header class="bg-grey text-white q-py-sm"
+          <q-item-label
+            header
+            class="bg-grey text-white q-py-sm"
+            v-if="listExpanse.filter((x) => x.pay).length"
             >Pagos</q-item-label
           >
+        </q-list>
+
+        <q-list separator v-if="listPay.length">
+          <q-item-label header class="bg-grey text-white q-py-sm"
+            >Pagos
+          </q-item-label>
           <q-item
-            tag="label"
             v-ripple
-            v-for="(item, i) in listExpanse.filter((x) => x.pay)"
+            v-for="(item, i) in listPay"
             :key="i"
             :class="item.operator == 'credit' ? 'bg-green-1' : 'bg-red-1'"
+            clickable
+            @click="expanseStore.fbUpdateExpanse(item)"
           >
             <q-item-section side top>
               <q-checkbox v-model="item.pay" />
@@ -149,27 +160,34 @@ export default {
   },
   data() {
     return {
+      expanseStore,
       showDialogAddDespesa: false,
       operator: null,
       idList: this.$route.params.id,
+      deleteId: null,
+      editiId: null,
     };
   },
   computed: {
     listExpanse() {
-      let id = this.idList;
-      let list = [];
-      let litim = listStore.readListItems.filter((x) => x.dateCreate == id)[0]
-        .tasks;
+      return listStore.readListPendent;
+    },
+    listPay() {
+      return listStore.readListPay;
+    },
+  },
+  methods: {
+    updateTask(item) {
+      // item.pay = !item.pay;
+      // this.deleteId = null;
+      // this.editId = null;
 
-      for (const property in litim) {
-        list.push(litim[property]);
-      }
-
-      return list;
+      expanseStore.fbUpdateExpanse(item);
     },
   },
   created() {
     expanseStore.cargaGroup();
+    listStore.setIdList(this.$route.params.id);
   },
 };
 </script>

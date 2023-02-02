@@ -7,6 +7,7 @@ export const useListStore = defineStore("list", {
     list: [],
     downloadOk: false,
     listItems: null,
+    idList: null,
   }),
   getters: {
     readList() {
@@ -16,7 +17,21 @@ export const useListStore = defineStore("list", {
       return this.downloadOk;
     },
     readListItems() {
-      return this.list;
+      let id = this.idList;
+      let list = [];
+      let litim = this.list.filter((x) => x.dateCreate == id)[0].tasks;
+
+      for (const property in litim) {
+        list.push(litim[property]);
+      }
+
+      return list;
+    },
+    readListPendent() {
+      return this.readListItems.filter((x) => !x.pay);
+    },
+    readListPay() {
+      return this.readListItems.filter((x) => x.pay);
     },
   },
   actions: {
@@ -87,6 +102,9 @@ export const useListStore = defineStore("list", {
     },
     completeDowload(value) {
       this.downloadOk = value;
+    },
+    setIdList(item) {
+      this.idList = item;
     },
   },
 });

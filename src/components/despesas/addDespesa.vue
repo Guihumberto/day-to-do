@@ -130,10 +130,7 @@
           </template>
         </template>
 
-        <q-checkbox
-          v-model="despesaForm.recorrent"
-          label="Entrada Recorrente"
-        />
+        <q-checkbox v-model="despesaForm.recorrent" label="Recorrente" />
       </q-card-section>
       <q-card-actions align="right">
         <q-btn

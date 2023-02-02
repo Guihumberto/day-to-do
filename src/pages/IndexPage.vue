@@ -48,19 +48,15 @@
                 v-for="(item, i) in list"
                 :key="i"
                 clickable
+                @click.stop="goTo(item)"
                 :class="idDelete == item.dateCreate ? 'bg-red' : 'white'"
               >
+                <q-item-section avatar>
+                  <q-icon :name="!item.complete ? 'hourglass_top' : 'check'" />
+                </q-item-section>
                 <q-item-section v-if="idEdit != item.dateCreate">
                   <q-item-label>
-                    <q-btn
-                      flat
-                      no-caps
-                      :color="idDelete == item.dateCreate ? 'white' : 'grey-8'"
-                      :icon="!item.complete ? 'hourglass_top' : 'check'"
-                      :label="item.name"
-                      :to="`todo/${item.dateCreate}`"
-                      class="btnCenterLink"
-                    />
+                    {{ item.name }}
                   </q-item-label>
                 </q-item-section>
 
@@ -125,7 +121,13 @@
 
                 <!-- menu -->
                 <q-item-section side v-if="idDelete != item.dateCreate">
-                  <q-btn color="grey-7" round flat icon="more_vert">
+                  <q-btn
+                    color="grey-7"
+                    round
+                    flat
+                    icon="more_vert"
+                    @click.stop="true"
+                  >
                     <q-menu cover auto-close>
                       <q-list class="bg-grey-3">
                         <q-item
@@ -163,7 +165,9 @@
             color="green-4"
             @click="goInsertList()"
           />
-          <p class="text-caption text-grey">Adicionar Nova Lista</p>
+          <p class="text-caption text-grey">
+            Clique aqui para adicionar uma nova lista
+          </p>
         </div>
       </div>
     </template>
@@ -219,6 +223,9 @@ export default {
     goInsertList() {
       this.isAutoFocus = false;
       this.isAutoFocus = true;
+    },
+    goTo(item) {
+      this.$router.push(`todo/${item.dateCreate}`);
     },
   },
 };
