@@ -9,7 +9,7 @@ const routes = [
         name: "Lista",
       },
       {
-        path: "/todo/:id",
+        path: "/todo/:id/:list",
         component: () => import("pages/Todo.vue"),
         name: "Despesas",
       },

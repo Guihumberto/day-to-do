@@ -16,7 +16,7 @@
       </div>
       <div>
         <q-item-label header class="text-center bg-black text-white text-bold"
-          >Janeiro/2023 <br />
+          >{{ $route.params.list }}<br />
           <small class="text-caption">
             <span class="text-red">D: 0,00</span> |
             <span class="text-green">P 0,00</span> |
@@ -125,6 +125,16 @@
         color="grey-4"
         class="absolute-center"
       />
+      <div>
+        <q-item-label header class="text-center bg-black text-white text-bold"
+          >{{ $route.params.list }}<br />
+          <small class="text-caption">
+            <span class="text-red">D: 0,00</span> |
+            <span class="text-green">P 0,00</span> |
+            <span class="text-grey"> T: 0,00</span>
+          </small>
+        </q-item-label>
+      </div>
     </div>
 
     <!-- dialog add despesa -->

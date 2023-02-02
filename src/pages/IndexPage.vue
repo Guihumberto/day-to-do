@@ -225,7 +225,7 @@ export default {
       this.isAutoFocus = true;
     },
     goTo(item) {
-      this.$router.push(`todo/${item.dateCreate}`);
+      this.$router.push(`todo/${item.dateCreate}/${item.name}`);
     },
   },
 };
