@@ -18,8 +18,8 @@
         <q-item-label header class="text-center bg-black text-white text-bold"
           >{{ $route.params.list }}<br />
           <small class="text-caption">
-            <span class="text-red">D: 0,00</span> |
-            <span class="text-green">P 0,00</span> |
+            <span class="text-red">D: {{ total.devendo }}</span> |
+            <span class="text-green">P {{ total.pago }}</span> |
             <span class="text-grey"> T: 0,00</span>
           </small>
         </q-item-label>
@@ -194,6 +194,12 @@ export default {
     },
     listPay() {
       return listStore.readListPay;
+    },
+    total() {
+      return {
+        pago: 10,
+        devendo: 30,
+      };
     },
   },
   methods: {
