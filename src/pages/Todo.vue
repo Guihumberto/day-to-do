@@ -105,15 +105,12 @@
               >
                 <q-menu cover auto-close>
                   <q-list class="bg-grey-3" separator>
-                    <q-item
-                      clickable
-                      @click="(editiId = item.dateCreate), (deleteId = null)"
-                    >
+                    <!-- <q-item clickable @click="editTask(item)">
                       <q-item-section avatar>
                         <q-avatar icon="edit" />
                       </q-item-section>
                       <q-item-section>Editar</q-item-section>
-                    </q-item>
+                    </q-item> -->
                     <q-item
                       clickable
                       @click="(deleteId = item.dateCreate), (editiId = null)"
@@ -270,6 +267,10 @@
       <addDespesa @close="showDialogAddDespesa = false" :operator="operator" />
     </q-dialog>
 
+    <q-dialog v-model="showEditTask">
+      <editDespesa :task="ediTaskItem" @close="showEditTask = false" />
+    </q-dialog>
+
     <!-- btn ad despeqas -->
     <q-page-sticky position="bottom-right" :offset="[18, 18]">
       <q-fab icon="add" direction="up" color="primary">
@@ -296,6 +297,7 @@
 <script>
 import formatCurrency from "src/mixins/format-currency";
 import addDespesa from "components/despesas/addDespesa.vue";
+import editDespesa from "components/despesas/editDespesa.vue";
 import { useExpanseStore } from "stores/ExpanseStore";
 const expanseStore = useExpanseStore();
 
@@ -307,6 +309,7 @@ export default {
   mixins: [formatCurrency],
   components: {
     addDespesa,
+    editDespesa,
   },
   data() {
     return {
@@ -317,6 +320,8 @@ export default {
       deleteId: null,
       editiId: null,
       showDetails: false,
+      showEditTask: false,
+      ediTaskItem: null,
     };
   },
   computed: {
@@ -375,6 +380,20 @@ export default {
       this.deleteId = null;
       this.editId = null;
       expanseStore.fbUpdateExpanse(item);
+    },
+    editTask(item) {
+      let task = {
+        name: item.name,
+        group: item.group,
+        mount: item.mount,
+        dateCreate: item.dateCreate,
+        pay: false,
+        recorrent: item.recorrent,
+        mounthYear: "02/2023",
+      };
+      this.deleteId = null;
+      this.ediTaskItem = task;
+      this.showEditTask = true;
     },
   },
   created() {

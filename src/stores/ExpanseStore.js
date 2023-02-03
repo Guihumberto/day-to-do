@@ -101,13 +101,23 @@ export const useExpanseStore = defineStore("expanse", {
       linkUser.update(item);
       Notify.create("Lançamento Atualizado!");
     },
+    fbUpdateExpanseEdit(item) {
+      console.log(item);
+      return;
+      let userUid = auth.currentUser.uid;
+      let linkUser = firebaseDb.ref(
+        `/todo/${userUid}/list/${item.idList}/tasks/${item.dateCreate}`
+      );
+      linkUser.update(item);
+      Notify.create("Lançamento Atualizado!");
+    },
     fbDeleteExpanse(item) {
       let userUid = auth.currentUser.uid;
       let linkUser = firebaseDb.ref(
         `/todo/${userUid}/list/${item.idList}/tasks/${item.dateCreate}`
       );
       linkUser.remove();
-      Notify.create("Lançamento Removida!");
+      Notify.create("Lançamento Removido!");
     },
     completeDowload(value) {
       this.downloadOk = value;
