@@ -61,7 +61,13 @@
             v-ripple
             v-for="(item, i) in listExpanse"
             :key="i"
-            :class="item.operator == 'credit' ? 'bg-green-1' : 'bg-red-1'"
+            :class="
+              deleteId == item.dateCreate
+                ? 'bg-red'
+                : item.operator == 'credit'
+                ? 'bg-green-1'
+                : 'bg-red-1'
+            "
             @click="expanseStore.fbUpdateExpanse(item)"
             clickable
           >
@@ -87,6 +93,69 @@
                   "
                 />
               </div>
+            </q-item-section>
+            <!-- menu -->
+            <q-item-section side v-if="deleteId != item.dateCreate">
+              <q-btn
+                color="grey-7"
+                round
+                flat
+                icon="more_vert"
+                @click.stop="true"
+              >
+                <q-menu cover auto-close>
+                  <q-list class="bg-grey-3" separator>
+                    <q-item
+                      clickable
+                      @click="(editiId = item.dateCreate), (deleteId = null)"
+                    >
+                      <q-item-section avatar>
+                        <q-avatar icon="edit" />
+                      </q-item-section>
+                      <q-item-section>Editar</q-item-section>
+                    </q-item>
+                    <q-item
+                      clickable
+                      @click="(deleteId = item.dateCreate), (editiId = null)"
+                    >
+                      <q-item-section avatar>
+                        <q-avatar icon="delete" />
+                      </q-item-section>
+                      <q-item-section>Deletar</q-item-section>
+                    </q-item>
+                  </q-list>
+                </q-menu>
+              </q-btn>
+            </q-item-section>
+            <!-- delete -->
+            <q-item-section side class="bg-red" v-else>
+              <transition
+                appear
+                enter-active-class="animated bounceInRight slower"
+                leave-active-class="animated bounceOutRight slower"
+              >
+                <div class="row">
+                  <q-btn
+                    flat
+                    size="sm"
+                    color="white"
+                    no-caps
+                    label="Cancelar"
+                    @click.stop="deleteId = null"
+                    dense
+                  />
+
+                  <q-btn
+                    outline
+                    size="sm"
+                    color="white"
+                    no-caps
+                    label="Apagar"
+                    @click.stop="expanseStore.fbDeleteExpanse(item)"
+                    class="q-mx-sm"
+                  />
+                </div>
+              </transition>
             </q-item-section>
           </q-item>
           <q-item-label
@@ -158,11 +227,6 @@
       <div>
         <q-item-label header class="text-center bg-black text-white text-bold"
           >{{ $route.params.list }}<br />
-          <small class="text-caption">
-            <span class="text-red">D: 0,00</span> |
-            <span class="text-green">P 0,00</span> |
-            <span class="text-grey"> T: 0,00</span>
-          </small>
         </q-item-label>
       </div>
     </div>

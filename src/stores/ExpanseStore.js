@@ -107,7 +107,7 @@ export const useExpanseStore = defineStore("expanse", {
         `/todo/${userUid}/list/${item.idList}/tasks/${item.dateCreate}`
       );
       linkUser.remove();
-      Notify.create("Entrada Removida!");
+      Notify.create("Lançamento Removida!");
     },
     completeDowload(value) {
       this.downloadOk = value;
