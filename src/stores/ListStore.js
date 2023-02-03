@@ -11,7 +11,10 @@ export const useListStore = defineStore("list", {
   }),
   getters: {
     readList() {
-      return this.list;
+      let values = this.list.filter(function (a) {
+        return !this[JSON.stringify(a)] && (this[JSON.stringify(a)] = true);
+      }, Object.create(null));
+      return values;
     },
     readDownload() {
       return this.downloadOk;
@@ -25,7 +28,11 @@ export const useListStore = defineStore("list", {
         list.push(litim[property]);
       }
 
-      return list;
+      let values = list.filter(function (a) {
+        return !this[JSON.stringify(a)] && (this[JSON.stringify(a)] = true);
+      }, Object.create(null));
+
+      return values;
     },
     readListPendent() {
       return this.readListItems.filter((x) => !x.pay);

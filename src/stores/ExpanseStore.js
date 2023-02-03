@@ -23,10 +23,12 @@ export const useExpanseStore = defineStore("expanse", {
       return this.downloadOk;
     },
     readExpanseList() {
-      return this.listExpanseGroup;
+      const arrUnique = [...new Set(this.listExpanseGroup)];
+      return arrUnique;
     },
     readCreditList() {
-      return this.listCreditGroup;
+      const arrUnique = [...new Set(this.listCreditGroup)];
+      return arrUnique;
     },
   },
   actions: {

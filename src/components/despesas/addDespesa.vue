@@ -218,6 +218,8 @@ export default {
   },
   methods: {
     addExpanse(item) {
+      item.mount = item.mount.replace(".", "").replace(",", ".");
+      item.mount = this.operator == "credit" ? +item.mount : -item.mount;
       item.idList = this.$route.params.id;
       item.operator = this.operator;
       expanseStore.addExpanse(item);
