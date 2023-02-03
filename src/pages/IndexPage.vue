@@ -52,11 +52,16 @@
                 :class="idDelete == item.dateCreate ? 'bg-red' : 'white'"
               >
                 <q-item-section avatar>
-                  <q-icon :name="!item.complete ? 'hourglass_top' : 'check'" />
+                  <q-icon :name="!item.complete ? 'list' : 'check'" />
                 </q-item-section>
                 <q-item-section v-if="idEdit != item.dateCreate">
                   <q-item-label>
                     {{ item.name }}
+                  </q-item-label>
+                  <q-item-label caption lines="1">
+                    {{
+                      item.tasks ? qtdItems(item.tasks).qtd + " Items" : "Vazio"
+                    }}
                   </q-item-label>
                 </q-item-section>
 
@@ -116,7 +121,9 @@
 
                 <!-- total -->
                 <q-item-section side v-else>
-                  <span>R$ Total</span>
+                  <span>{{
+                    item.tasks ? qtdItems(item.tasks).saldo : ""
+                  }}</span>
                 </q-item-section>
 
                 <!-- menu -->
@@ -180,12 +187,13 @@
 </template>
 
 <script>
+import formatCurrency from "src/mixins/format-currency";
 import { useListStore } from "stores/ListStore";
 const listStore = useListStore();
 
 export default {
   name: "OtdoPage",
-
+  mixins: [formatCurrency],
   data() {
     return {
       nameList: null,
@@ -226,6 +234,20 @@ export default {
     },
     goTo(item) {
       this.$router.push(`todo/${item.dateCreate}/${item.name}`);
+    },
+    qtdItems(item) {
+      let list = [];
+      for (const property in item) {
+        list.push(item[property]);
+      }
+
+      let values = list.filter(function (a) {
+        return !this[JSON.stringify(a)] && (this[JSON.stringify(a)] = true);
+      }, Object.create(null));
+
+      let saldo = values.reduce((sum, record) => sum + record.mount, 0);
+
+      return { qtd: values.length, saldo: this.formatCurrency(saldo) };
     },
   },
 };

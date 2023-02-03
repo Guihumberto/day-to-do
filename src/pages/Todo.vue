@@ -232,7 +232,6 @@
 <script>
 import formatCurrency from "src/mixins/format-currency";
 import addDespesa from "components/despesas/addDespesa.vue";
-import detailsDialog from "components/despesas/details.vue";
 import { useExpanseStore } from "stores/ExpanseStore";
 const expanseStore = useExpanseStore();
 
@@ -244,7 +243,6 @@ export default {
   mixins: [formatCurrency],
   components: {
     addDespesa,
-    // detailsDialog,
   },
   data() {
     return {
