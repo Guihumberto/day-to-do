@@ -1,56 +1,61 @@
 <template>
   <q-page>
     <div
-      class="absolute full-width full-height column"
+      class="absolute full-width full-height column bg-black"
       v-if="listExpanse.length || listPay.length"
     >
-      <div>
+      <div class="bg-black row justify-between">
+        <q-btn round flat color="white" no-caps icon="chevron_left" to="/" />
+        <div class="row">
+          <h5 class="text-h6 q-my-sm text-white">{{ $route.params.list }}</h5>
+          <q-btn
+            round
+            flat
+            color="white"
+            no-caps
+            :icon="expandDetails ? 'expand_more' : 'chevron_right'"
+            @click="expandDetails = !expandDetails"
+          />
+        </div>
         <q-btn
+          round
           flat
-          color="primary"
-          no-caps
-          icon="chevron_left"
-          label="Voltar"
-          to="/"
+          color="white"
+          icon="loupe"
+          @click="showDetails = true"
         />
       </div>
+      <transition
+        appear
+        leave-active-class="animated fadeOutUp slower"
+        enter-active-class="animated fadeInDown slower"
+      >
+        <div v-if="expandDetails">
+          <div class="row text-h6 justify-center bg-black text-white">
+            <div class="col-6 text-right">
+              <span class="text-green q-pr-md">P: {{ total.pago }}</span>
+            </div>
+            <div class="col-6 text-left">
+              <span class="text-blue q-pl-md">R: {{ total.recebido }}</span>
+            </div>
+            <div class="col-6 text-right">
+              <span class="text-red q-pr-md">D: {{ total.devendo }}</span>
+            </div>
+            <div class="col-6 text-left">
+              <span class="text-orange q-pl-md">F: {{ total.falta }}</span>
+            </div>
+          </div>
+        </div>
+      </transition>
       <div>
-        <q-item-label header class="text-center bg-black text-white text-bold">
-          <div>
-            <h5 class="text-h6 q-my-none">{{ $route.params.list }}</h5>
-            <q-space />
-            <q-btn
-              rounded
-              label="Detalhes"
-              size="xs"
-              color="grey-8"
-              icon="loupe"
-              @click="showDetails = true"
-            />
-          </div>
-          <div class="row text-caption">
-            <div class="col-6">
-              <span class="text-green">P: {{ total.pago }}</span>
-            </div>
-            <div class="col-6">
-              <span class="text-blue">R: {{ total.recebido }}</span>
-            </div>
-            <div class="col-6">
-              <span class="text-red">D: {{ total.devendo }}</span>
-            </div>
-            <div class="col-6">
-              <span class="text-orange">F: {{ total.falta }}</span>
-            </div>
-          </div>
-        </q-item-label>
         <q-item>
           <q-item-section>
-            <div class="motthSelect">
+            <div class="motthSelect text-white">
               Classificar: mais recentes para o mais antigo
             </div>
           </q-item-section>
           <q-item-section side>
-            <q-icon name="list" />
+            <q-icon name="list" color="white" />
           </q-item-section>
         </q-item>
       </div>
@@ -322,6 +327,7 @@ export default {
       showDetails: false,
       showEditTask: false,
       ediTaskItem: null,
+      expandDetails: true,
     };
   },
   computed: {

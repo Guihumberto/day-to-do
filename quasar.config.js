@@ -110,6 +110,8 @@ module.exports = configure(function (/* ctx */) {
       "backInDown",
       "bounceOutRight",
       "bounceInRight",
+      "fadeOutUp",
+      "fadeInDown",
     ],
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#property-sourcefiles
