@@ -102,8 +102,6 @@ export const useExpanseStore = defineStore("expanse", {
       Notify.create("Lançamento Atualizado!");
     },
     fbUpdateExpanseEdit(item) {
-      console.log(item);
-      return;
       let userUid = auth.currentUser.uid;
       let linkUser = firebaseDb.ref(
         `/todo/${userUid}/list/${item.idList}/tasks/${item.dateCreate}`
@@ -166,12 +164,14 @@ export const useExpanseStore = defineStore("expanse", {
       //child added
       Credit.on("child_added", (snapshot) => {
         let plan = snapshot.val();
+        console.log(plan);
         this.listCreditGroup.push(plan);
       });
 
       Expanse.on("child_added", (snapshot) => {
         let plan = snapshot.val();
-        this.listExpanseGroup.push(plan);
+        console.log(plan);
+        this.listExpanseGroup.push(Object.values(plan));
       });
     },
   },

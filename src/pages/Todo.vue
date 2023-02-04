@@ -31,7 +31,9 @@
         enter-active-class="animated fadeInDown slower"
       >
         <div v-if="expandDetails">
-          <div class="row text-h6 justify-center bg-black text-white">
+          <div
+            class="row text-h6 justify-center bg-black text-white text-weight-light"
+          >
             <div class="col-6 text-right">
               <span class="text-green q-pr-md">P: {{ total.pago }}</span>
             </div>
@@ -110,12 +112,12 @@
               >
                 <q-menu cover auto-close>
                   <q-list class="bg-grey-3" separator>
-                    <!-- <q-item clickable @click="editTask(item)">
+                    <q-item clickable @click="editTask(item)">
                       <q-item-section avatar>
                         <q-avatar icon="edit" />
                       </q-item-section>
                       <q-item-section>Editar</q-item-section>
-                    </q-item> -->
+                    </q-item>
                     <q-item
                       clickable
                       @click="(deleteId = item.dateCreate), (editiId = null)"
@@ -272,8 +274,159 @@
       <addDespesa @close="showDialogAddDespesa = false" :operator="operator" />
     </q-dialog>
 
+    <!-- dialog editar despesa -->
     <q-dialog v-model="showEditTask">
-      <editDespesa :task="ediTaskItem" @close="showEditTask = false" />
+      <q-card style="width: 300px">
+        <q-bar class="text-white" :class="operatorSelect.bgColor">
+          <q-icon :name="operatorSelect.icon" />
+          <span class="text-caption q-ml-sm">{{ operatorSelect.text }}</span>
+          <q-space />
+
+          <q-btn dense flat icon="close" v-close-popup>
+            <q-tooltip>Close</q-tooltip>
+          </q-btn>
+        </q-bar>
+        <q-form @submit="editExpanse(despesaFormEdit)" class="q-gutter-md">
+          <q-card-section>
+            <q-input
+              outlined
+              dense
+              placeholder="Dê o título a entrada"
+              v-model.trim="despesaFormEdit.name"
+              type="text"
+              label="Nome"
+              :rules="[(val) => !!val || 'Campo Obrigatório']"
+            />
+            <q-input
+              outlined
+              dense
+              placeholder="0,00"
+              v-model.trim="despesaFormEdit.mount"
+              label="Valor"
+              reverse-fill-mask
+              mask="##.###,##"
+            />
+            <!-- receita -->
+            <template v-if="despesaFormEdit.operator == 'credit'">
+              <div v-if="!showCadGroupExpanse">
+                <q-select
+                  v-model="despesaFormEdit.group"
+                  :options="listCreditGroup"
+                  label="Grupo de Receita"
+                  outlined
+                  dense
+                  class="q-mt-md"
+                />
+                <q-btn
+                  color="primary"
+                  flat
+                  no-caps
+                  dense
+                  icon="add"
+                  label="inserir um novo grupo de receita"
+                  size="sm"
+                  @click="
+                    (showCadGroupExpanse = true), (despesaFormEdit.group = null)
+                  "
+                  class="width-full"
+                />
+              </div>
+
+              <template v-else>
+                <div class="row items-center">
+                  <q-input
+                    outlined
+                    dense
+                    placeholder="Digite o nome do grupo"
+                    v-model.trim="despesaFormEdit.group"
+                    type="text"
+                    label="Novo Grupo"
+                    class="q-mt-md col"
+                  />
+                  <q-btn
+                    flat
+                    color="primary"
+                    icon="close"
+                    size="sm"
+                    @click="showCadGroupExpanse = false"
+                    class="col col-shrink q-mt-md"
+                    round
+                  />
+                </div>
+              </template>
+            </template>
+
+            <!-- despesa -->
+            <template v-else>
+              <div v-if="!showCadGroupExpanse">
+                <q-select
+                  v-model="despesaFormEdit.group"
+                  :options="listExpanseGroup"
+                  label="Grupo de Despesa"
+                  outlined
+                  dense
+                  class="q-mt-md"
+                />
+                <q-btn
+                  color="primary"
+                  flat
+                  no-caps
+                  dense
+                  icon="add"
+                  label="inserir um novo grupo de despesa"
+                  size="sm"
+                  @click="
+                    (showCadGroupExpanse = true), (despesaFormEdit.group = null)
+                  "
+                  class="width-full"
+                />
+              </div>
+
+              <template v-else>
+                <div class="row items-center">
+                  <q-input
+                    outlined
+                    dense
+                    placeholder="Digite o nome do grupo"
+                    v-model.trim="despesaFormEdit.group"
+                    type="text"
+                    label="Novo Grupo de Despesa"
+                    class="q-mt-md col"
+                  />
+                  <q-btn
+                    flat
+                    color="primary"
+                    icon="close"
+                    size="sm"
+                    @click="showCadGroupExpanse = false"
+                    class="col col-shrink q-mt-md"
+                    round
+                  />
+                </div>
+              </template>
+            </template>
+
+            <q-checkbox
+              v-model="despesaFormEdit.recorrent"
+              label="Recorrente"
+            />
+          </q-card-section>
+          <q-card-actions align="right">
+            <q-btn
+              @click="clearExpanseForm()"
+              flat
+              label="limpar"
+              :color="operatorSelect.textColor"
+            />
+            <q-btn
+              type="submit"
+              outline
+              label="Salvar"
+              :color="operatorSelect.textColor"
+            />
+          </q-card-actions>
+        </q-form>
+      </q-card>
     </q-dialog>
 
     <!-- btn ad despeqas -->
@@ -302,7 +455,6 @@
 <script>
 import formatCurrency from "src/mixins/format-currency";
 import addDespesa from "components/despesas/addDespesa.vue";
-import editDespesa from "components/despesas/editDespesa.vue";
 import { useExpanseStore } from "stores/ExpanseStore";
 const expanseStore = useExpanseStore();
 
@@ -314,7 +466,6 @@ export default {
   mixins: [formatCurrency],
   components: {
     addDespesa,
-    editDespesa,
   },
   data() {
     return {
@@ -328,6 +479,17 @@ export default {
       showEditTask: false,
       ediTaskItem: null,
       expandDetails: true,
+      despesaFormEdit: {
+        name: "",
+        group: "",
+        mount: "",
+        dateCreate: "",
+        operator: null,
+        pay: false,
+        recorrent: false,
+        mounthYear: "02/2023",
+      },
+      showCadGroupExpanse: false,
     };
   },
   computed: {
@@ -380,6 +542,27 @@ export default {
         saldo: this.formatCurrency(saldo),
       };
     },
+    operatorSelect() {
+      return this.despesaFormEdit.operator == "credit"
+        ? {
+            bgColor: "bg-green",
+            icon: "add",
+            textColor: "green",
+            text: "Editar Receitas",
+          }
+        : {
+            bgColor: "bg-red",
+            icon: "remove",
+            textColor: "red",
+            text: "Editar Despesas",
+          };
+    },
+    listExpanseGroup() {
+      return expanseStore.readExpanseList;
+    },
+    listCreditGroup() {
+      return expanseStore.readCreditList;
+    },
   },
   methods: {
     updateTask(item) {
@@ -388,18 +571,46 @@ export default {
       expanseStore.fbUpdateExpanse(item);
     },
     editTask(item) {
-      let task = {
+      this.despesaFormEdit = {
         name: item.name,
         group: item.group,
         mount: item.mount,
         dateCreate: item.dateCreate,
+        operator: item.operator,
         pay: false,
         recorrent: item.recorrent,
         mounthYear: "02/2023",
       };
       this.deleteId = null;
-      this.ediTaskItem = task;
       this.showEditTask = true;
+    },
+    clearExpanseForm() {
+      this.despesaFormEdit = {
+        name: "",
+        group: "",
+        mount: 0,
+        operator: null,
+        dateCreate: "",
+        pay: false,
+        recorrent: false,
+        mounthYear: "02/2023",
+      };
+    },
+    editExpanse(item) {
+      item.mount = item.mount.replace(".", "").replace(",", ".");
+      item.mount = this.operator == "credit" ? +item.mount : -item.mount;
+      item.idList = this.$route.params.id;
+      item.operator = this.operator;
+      expanseStore.fbUpdateExpanseEdit(item);
+
+      if (this.showCadGroupExpanse) {
+        let newGroup = item.group;
+        expanseStore.addGroup({ name: newGroup, type: item.operator });
+      }
+      this.showCadGroupExpanse = false;
+      this.clearExpanseForm;
+      this.showEditTask = false;
+      this.editiId = null;
     },
   },
   created() {
