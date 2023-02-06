@@ -117,7 +117,17 @@ export default {
   },
   computed: {
     listRecorrentTask() {
-      return recorrentStore.readRecorrent;
+      let list = recorrentStore.readRecorrent;
+      if (this.listId.length) {
+        this.listId.forEach((id) => {
+          let index = recorrentStore.readRecorrent.findIndex(
+            (x) => x.dateCreate == id
+          );
+          list.splice(index, 1);
+        });
+      }
+
+      return list;
     },
     listChecked() {
       return recorrentStore.readRecorrent.filter((x) => x.recorrent);
