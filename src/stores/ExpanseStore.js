@@ -2,6 +2,9 @@ import { defineStore } from "pinia";
 import { firebaseDb, auth } from "boot/firebase";
 import { Notify } from "quasar";
 
+import { useRecorrentStore } from "stores/RecorrentStore";
+const recorrentStore = useRecorrentStore();
+
 export const useExpanseStore = defineStore("expanse", {
   state: () => ({
     listExpanse: [],
@@ -69,6 +72,7 @@ export const useExpanseStore = defineStore("expanse", {
         dateCreate: Date.now(),
         pay: item.pay,
         recorrent: item.recorrent,
+        fix: item.fix,
         operator: item.operator,
         mounthYear: item.mounthYear,
       };
@@ -78,6 +82,10 @@ export const useExpanseStore = defineStore("expanse", {
       );
       linkUser.set(expanse);
       Notify.create("Entrada adicionado!");
+
+      if (expanse.recorrent) {
+        recorrentStore.addTaskrecorret(expanse);
+      }
     },
     updateExpanse(payload) {
       const x = this.listExpanse.map((item) =>
@@ -164,14 +172,12 @@ export const useExpanseStore = defineStore("expanse", {
       //child added
       Credit.on("child_added", (snapshot) => {
         let plan = snapshot.val();
-        console.log(plan);
         this.listCreditGroup.push(plan);
       });
 
       Expanse.on("child_added", (snapshot) => {
         let plan = snapshot.val();
-        console.log(plan);
-        this.listExpanseGroup.push(Object.values(plan));
+        this.listExpanseGroup.push(plan);
       });
     },
   },

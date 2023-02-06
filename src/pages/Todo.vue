@@ -1,7 +1,7 @@
 <template>
   <q-page>
     <div
-      class="absolute full-width full-height column bg-black"
+      class="absolute full-width full-height column"
       v-if="listExpanse.length || listPay.length"
     >
       <div class="bg-black row justify-between">
@@ -25,12 +25,13 @@
           @click="showDetails = true"
         />
       </div>
+      <!-- detalhes -->
       <transition
         appear
         leave-active-class="animated fadeOutUp slower"
         enter-active-class="animated fadeInDown slower"
       >
-        <div v-if="expandDetails">
+        <div v-if="expandDetails" class="bg-black">
           <div
             class="row text-h6 justify-center bg-black text-white text-weight-light"
           >
@@ -49,7 +50,8 @@
           </div>
         </div>
       </transition>
-      <div>
+      <!-- classificação -->
+      <div class="bg-black">
         <q-item>
           <q-item-section>
             <div class="motthSelect text-white">
@@ -57,7 +59,13 @@
             </div>
           </q-item-section>
           <q-item-section side>
-            <q-icon name="list" color="white" />
+            <q-btn
+              flat
+              dense
+              icon="file_download"
+              color="white"
+              @click="showRecorrentList = true"
+            />
           </q-item-section>
         </q-item>
       </div>
@@ -76,10 +84,11 @@
                 : 'bg-red-1'
             "
             @click="expanseStore.fbUpdateExpanse(item)"
-            clickable
+            :clickable="!deleteId"
           >
             <q-item-section side top>
               <q-checkbox
+                :disable="!!deleteId"
                 v-model="item.pay"
                 @click.stop="
                   (item.pay = !item.pay), expanseStore.fbUpdateExpanse(item)
@@ -212,26 +221,22 @@
     </div>
 
     <div v-else>
-      {{ listItems }}
-      <q-btn
-        flat
-        color="primary"
-        no-caps
-        icon="chevron_left"
-        label="Voltar"
-        to="/"
-      />
-      <q-icon
-        alt="Sem despesas cadastradas"
-        name="task"
-        size="200px"
-        color="grey-4"
-        class="absolute-center"
-      />
-      <div>
-        <q-item-label header class="text-center bg-black text-white text-bold"
-          >{{ $route.params.list }}<br />
-        </q-item-label>
+      <div class="absolute-center">
+        <q-icon color="grey-5" name="do_not_disturb" size="80px" />
+      </div>
+
+      <div class="bg-black row justify-between">
+        <q-btn round flat color="white" no-caps icon="chevron_left" to="/" />
+        <div class="row">
+          <h5 class="text-h6 q-my-sm text-white">{{ $route.params.list }}</h5>
+        </div>
+        <q-btn
+          flat
+          dense
+          icon="file_download"
+          color="white"
+          @click="showRecorrentList = true"
+        />
       </div>
     </div>
 
@@ -274,6 +279,14 @@
       <addDespesa @close="showDialogAddDespesa = false" :operator="operator" />
     </q-dialog>
 
+    <!-- add recorrente despesa -->
+    <q-dialog v-model="showRecorrentList">
+      <addRecorrent
+        @close="showRecorrentList = false"
+        :listId="listIdRecords"
+      />
+    </q-dialog>
+
     <!-- dialog editar despesa -->
     <q-dialog v-model="showEditTask">
       <q-card style="width: 300px">
@@ -291,7 +304,7 @@
             <q-input
               outlined
               dense
-              placeholder="Dê o título a entrada"
+              placeholder="Dê um título ao labçamento"
               v-model.trim="despesaFormEdit.name"
               type="text"
               label="Nome"
@@ -305,6 +318,7 @@
               label="Valor"
               reverse-fill-mask
               mask="##.###,##"
+              :rules="[(val) => !!val || 'Campo Obrigatório']"
             />
             <!-- receita -->
             <template v-if="despesaFormEdit.operator == 'credit'">
@@ -458,6 +472,8 @@ import addDespesa from "components/despesas/addDespesa.vue";
 import { useExpanseStore } from "stores/ExpanseStore";
 const expanseStore = useExpanseStore();
 
+import addRecorrent from "components/despesas/addRecorrent.vue";
+
 import { useListStore } from "stores/ListStore";
 const listStore = useListStore();
 
@@ -466,6 +482,7 @@ export default {
   mixins: [formatCurrency],
   components: {
     addDespesa,
+    addRecorrent,
   },
   data() {
     return {
@@ -490,6 +507,7 @@ export default {
         mounthYear: "02/2023",
       },
       showCadGroupExpanse: false,
+      showRecorrentList: false,
     };
   },
   computed: {
@@ -563,6 +581,10 @@ export default {
     listCreditGroup() {
       return expanseStore.readCreditList;
     },
+    listIdRecords() {
+      let list = [...this.listExpanse, ...this.listPay];
+      return list.map((x) => x.dateCreate);
+    },
   },
   methods: {
     updateTask(item) {
@@ -574,7 +596,7 @@ export default {
       this.despesaFormEdit = {
         name: item.name,
         group: item.group,
-        mount: item.mount,
+        mount: null,
         dateCreate: item.dateCreate,
         operator: item.operator,
         pay: false,

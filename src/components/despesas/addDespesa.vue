@@ -53,7 +53,7 @@
               icon="add"
               label="inserir um novo grupo de receita"
               size="sm"
-              @click="showCadGroupExpanse = true"
+              @click="(showCadGroupExpanse = true), (despesaForm.group = null)"
               class="width-full"
             />
           </div>
@@ -131,6 +131,11 @@
         </template>
 
         <q-checkbox v-model="despesaForm.recorrent" label="Recorrente" />
+        <q-checkbox
+          v-model="despesaForm.fix"
+          label="Fixo"
+          v-if="despesaForm.recorrent"
+        />
       </q-card-section>
       <q-card-actions align="right">
         <q-btn
@@ -162,9 +167,10 @@ export default {
         name: "",
         group: "",
         mount: "",
-        dateInsert: "",
+        dateCreate: "",
         pay: false,
         recorrent: false,
+        fix: false,
         mounthYear: "02/2023",
       },
       ExpanseGroup: [
@@ -222,11 +228,14 @@ export default {
       item.mount = this.operator == "credit" ? +item.mount : -item.mount;
       item.idList = this.$route.params.id;
       item.operator = this.operator;
+
       expanseStore.addExpanse(item);
 
       if (this.showCadGroupExpanse) {
-        let newGroup = this.despesaForm.group;
-        expanseStore.addGroup({ name: newGroup, type: this.operator });
+        expanseStore.addGroup({
+          name: this.despesaForm.group,
+          type: this.operator,
+        });
       }
       this.showCadGroupExpanse = false;
       this.clearExpanseForm;

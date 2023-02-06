@@ -47,7 +47,7 @@
                 v-ripple
                 v-for="(item, i) in list"
                 :key="i"
-                clickable
+                :clickable="!idEdit"
                 @click.stop="goTo(item)"
                 :class="idDelete == item.dateCreate ? 'bg-red' : 'white'"
               >
@@ -79,6 +79,7 @@
                         placeholder="Digite o nome da lista"
                         @keydown.enter="editList(item)"
                         @keydown.esc="nameListEdit = null"
+                        autofocus
                         class="col"
                       />
                       <q-btn
@@ -88,7 +89,7 @@
                         color="grey"
                         icon="close"
                         class="col col-shrink"
-                        @click="idEdit = null"
+                        @click.stop="(idEdit = null), (nameListEdit = null)"
                       />
                     </div>
                   </q-item-label>
@@ -139,7 +140,11 @@
                       <q-list class="bg-grey-3">
                         <q-item
                           clickable
-                          @click="(idEdit = item.dateCreate), (idDelete = null)"
+                          @click="
+                            (idEdit = item.dateCreate),
+                              (idDelete = null),
+                              (nameListEdit = item.name)
+                          "
                         >
                           <q-item-section>Editar</q-item-section>
                         </q-item>
