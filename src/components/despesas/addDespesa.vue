@@ -228,6 +228,7 @@ export default {
       item.mount = this.operator == "credit" ? +item.mount : -item.mount;
       item.idList = this.$route.params.id;
       item.operator = this.operator;
+      item.dateCreate = Date.now();
 
       expanseStore.addExpanse(item);
 

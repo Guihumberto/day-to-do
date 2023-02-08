@@ -69,7 +69,7 @@ export const useExpanseStore = defineStore("expanse", {
         name: item.name,
         group: item.group,
         mount: item.mount,
-        dateCreate: Date.now(),
+        dateCreate: item.dateCreate,
         pay: item.pay,
         recorrent: item.recorrent,
         fix: item.fix,

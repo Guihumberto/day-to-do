@@ -1,11 +1,33 @@
 <template>
-  <q-card style="width: 700px; max-width: 80vw">
-    <q-card-section class="row items-center q-pb-none">
+  <q-card style="width: 800px">
+    <q-card-section class="row items-center">
       <div class="text-h6">Lançamentos Recorrentes</div>
       <q-space />
       <q-btn icon="close" flat round dense v-close-popup />
     </q-card-section>
     <q-card-section>
+      <q-input
+        rounded
+        v-model="filter.text"
+        type="text"
+        placeholder="Busca..."
+        dense
+        outlined
+        ><template v-slot:append>
+          <q-icon name="search" />
+        </template>
+      </q-input>
+      <div class="q-gutter-sm">
+        <q-radio v-model="filter.type" val="0" label="Todos" />
+        <q-radio v-model="filter.type" val="credit" label="a receber" />
+        <q-radio v-model="filter.type" val="expanse" label="a pagar" />
+      </div>
+    </q-card-section>
+    <q-item-label header>
+      Total de Registros: {{ listRecorrentTask.length }}</q-item-label
+    >
+    <q-separator />
+    <q-card-section style="max-height: 50vh" class="scroll">
       <q-list separator>
         <q-item
           v-ripple
@@ -90,7 +112,6 @@
       </q-list>
     </q-card-section>
     <q-card-actions align="center">
-      <v-space></v-space>
       <q-btn
         color="primary"
         label="Inserir a Lista"
@@ -112,25 +133,60 @@ recorrentStore.cargaRecorrent();
 
 export default {
   mixins: [formatCurrency],
+  data() {
+    return {
+      deleteId: null,
+      filter: {
+        text: null,
+        type: "0",
+      },
+    };
+  },
   props: {
     listId: Array,
   },
   computed: {
     listRecorrentTask() {
-      let list = recorrentStore.readRecorrent;
       if (this.listId.length) {
-        this.listId.forEach((id) => {
-          let index = recorrentStore.readRecorrent.findIndex(
-            (x) => x.dateCreate == id
-          );
-          list.splice(index, 1);
+        list = recorrentStore.readRecorrent;
+        this.listId.forEach((x) => {
+          let index = list.findIndex((y) => y.dateCreate == x);
+          if (index > 0) {
+            list.splice(index, 1);
+          }
         });
+      }
+
+      if (this.filter.text) {
+        let search = this.filter.text
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "");
+
+        let exp = new RegExp(
+          search.trim().replace(/[\[\]!'.@><|//\\&*()_+=]/g, ""),
+          "i"
+        );
+        //fazer o filtro
+        list = list.filter(
+          (item) =>
+            exp.test(
+              item.name.normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+            ) || exp.test(item.group.replace(".", ""))
+        );
+      }
+
+      if (this.filter.type != "0") {
+        list = list.filter((x) => x.operator == this.filter.type);
       }
 
       return list;
     },
     listChecked() {
-      return recorrentStore.readRecorrent.filter((x) => x.recorrent);
+      if (this.filter.text || this.filter.type != "0") {
+        return this.listRecorrentTask;
+      } else {
+        return recorrentStore.readRecorrent.filter((x) => x.recorrent);
+      }
     },
   },
   methods: {

@@ -54,9 +54,7 @@
       <div class="bg-black">
         <q-item>
           <q-item-section>
-            <div class="motthSelect text-white">
-              Classificar: mais recentes para o mais antigo
-            </div>
+            <org @orga="select = $event" />
           </q-item-section>
           <q-item-section side>
             <q-btn
@@ -473,6 +471,7 @@ import { useExpanseStore } from "stores/ExpanseStore";
 const expanseStore = useExpanseStore();
 
 import addRecorrent from "components/despesas/addRecorrent.vue";
+import org from "components/despesas/organization.vue";
 
 import { useListStore } from "stores/ListStore";
 const listStore = useListStore();
@@ -483,6 +482,7 @@ export default {
   components: {
     addDespesa,
     addRecorrent,
+    org,
   },
   data() {
     return {
@@ -508,14 +508,15 @@ export default {
       },
       showCadGroupExpanse: false,
       showRecorrentList: false,
+      select: { id: 1, title: "mais recente para o mais antigo" },
     };
   },
   computed: {
     listExpanse() {
-      return listStore.readListPendent;
+      return listStore.readListPendent.sort(this.order);
     },
     listPay() {
-      return listStore.readListPay;
+      return listStore.readListPay.sort(this.order);
     },
     total() {
       let devendo = this.listExpanse
@@ -633,6 +634,24 @@ export default {
       this.clearExpanseForm;
       this.showEditTask = false;
       this.editiId = null;
+    },
+    order(a, b) {
+      switch (this.select.id) {
+        case 1:
+          a.dateCreate > b.dateCreate;
+          break;
+        case 2:
+          a.dateCreate < b.dateCreate;
+          break;
+        case 3:
+          a.operator > b.operator;
+          break;
+        case 4:
+          a.operator < b.operator;
+          break;
+        default:
+          return 0;
+      }
     },
   },
   created() {
