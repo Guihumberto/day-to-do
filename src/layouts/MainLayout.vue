@@ -27,10 +27,7 @@
     </q-header>
 
     <q-drawer v-model="leftDrawerOpen" show-if-above bordered>
-      <q-list>
-        <q-item-label header>Menu </q-item-label>
-        {{ authStore.readLoggedIn }}
-      </q-list>
+      <headerSideBar />
     </q-drawer>
 
     <q-page-container>
@@ -41,11 +38,14 @@
 
 <script>
 import { defineComponent, ref } from "vue";
+import headerSideBar from "src/components/sidebar/header.vue";
 import { useAuthStore } from "stores/AuthStore";
 const authStore = useAuthStore();
 
 export default defineComponent({
   name: "MainLayout",
+
+  components: { headerSideBar },
 
   setup() {
     const leftDrawerOpen = ref(false);
